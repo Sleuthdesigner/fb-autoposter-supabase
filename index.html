@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scalz.ai — Facebook AutoPoster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- ========== AUTH SCREEN ========== -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+            <path d="M8 22L14 10L18 18L24 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h1>Scalz.ai</h1>
+        <p>Facebook AutoPoster</p>
+      </div>
+      <form id="auth-form">
+        <div class="auth-field">
+          <label>Email</label>
+          <input type="email" id="auth-email" required placeholder="you@example.com">
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="auth-password" required placeholder="••••••••" minlength="6">
+        </div>
+        <button type="submit" id="btn-auth-submit" class="auth-btn">Sign In</button>
+        <p class="auth-toggle">Don't have an account? <a href="#" id="auth-toggle-link">Sign Up</a></p>
+        <div id="auth-error" class="auth-error" style="display:none;"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== APP CONTAINER ========== -->
+  <div id="app-container" style="display:none;">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="8" fill="url(#brand-grad)"/>
+              <path d="M8 22L14 10L18 18L24 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="brand-grad" x1="0" y1="0" x2="32" y2="32">
+                  <stop offset="0%" stop-color="#3b82f6"/>
+                  <stop offset="100%" stop-color="#8b5cf6"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1>Scalz.ai <span class="brand-sub">Facebook AutoPoster</span></h1>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-date" id="header-date"></div>
+          <div id="user-info" class="user-info-container"></div>
+          <div class="header-status">
+            <span class="status-dot status-dot--active"></span>
+            <span>System Active</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav-inner">
+        <button class="nav-tab active" data-tab="dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </button>
+        <button class="nav-tab" data-tab="generate">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Generate Posts
+        </button>
+        <button class="nav-tab" data-tab="schedule">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Schedule
+        </button>
+        <button class="nav-tab" data-tab="settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+
+      <!-- ========== DASHBOARD TAB ========== -->
+      <section class="tab-content active" id="tab-dashboard">
+        <!-- Stats Row -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon--blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Posts Generated Today</span>
+              <span class="stat-value" id="stat-generated">0<span class="stat-total">/25</span></span>
+            </div>
+            <div class="stat-trend stat-trend--neutral">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon--amber">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Posts Scheduled</span>
+              <span class="stat-value" id="stat-scheduled">0</span>
+            </div>
+            <div class="stat-trend stat-trend--neutral">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon--green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Posts Published</span>
+              <span class="stat-value" id="stat-published">0</span>
+            </div>
+            <div class="stat-trend stat-trend--neutral">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon--purple">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Engagement Score</span>
+              <span class="stat-value" id="stat-engagement">—</span>
+            </div>
+            <div class="stat-trend stat-trend--neutral">Awaiting data</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button class="btn btn--primary btn--lg" id="btn-generate-today">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Generate Today's Posts
+          </button>
+          <button class="btn btn--outline btn--lg" id="btn-view-queue">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            View Queue
+          </button>
+        </div>
+
+        <!-- Weekly Timeline -->
+        <div class="section-header">
+          <h2>Weekly Post Timeline</h2>
+          <span class="section-badge">This Week</span>
+        </div>
+        <div class="timeline-container">
+          <div class="timeline-grid" id="timeline-grid"></div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="section-header" style="margin-top: 2rem;">
+          <h2>Recent Activity</h2>
+        </div>
+        <div class="activity-feed" id="activity-feed">
+          <div class="activity-item">
+            <div class="activity-dot activity-dot--blue"></div>
+            <div class="activity-content">
+              <span class="activity-text">System initialized. Ready to generate posts.</span>
+              <span class="activity-time">Just now</span>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot activity-dot--amber"></div>
+            <div class="activity-content">
+              <span class="activity-text">Facebook API connection pending setup.</span>
+              <span class="activity-time">Configure in Settings</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== GENERATE POSTS TAB ========== -->
+      <section class="tab-content" id="tab-generate">
+        <div class="generate-header">
+          <div class="generate-header-left">
+            <h2>AI Post Generator</h2>
+            <p>Generate 25 engaging Facebook posts with AI-powered photorealistic images across your selected niches.</p>
+          </div>
+          <div class="generate-header-right">
+            <button class="btn btn--primary btn--lg" id="btn-generate-posts">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Generate 25 Posts
+            </button>
+            <button class="btn btn--outline" id="btn-regenerate-all" style="display:none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Regenerate All
+            </button>
+          </div>
+        </div>
+
+        <div class="category-filters" id="category-filters" style="display:none;">
+          <button class="filter-btn active" data-filter="all">All Posts <span class="filter-count" id="count-all">25</span></button>
+          <button class="filter-btn" data-filter="business">
+            <span class="cat-dot cat-dot--amber"></span>Business & Marketing <span class="filter-count" id="count-business">9</span>
+          </button>
+          <button class="filter-btn" data-filter="ai">
+            <span class="cat-dot cat-dot--blue"></span>AI & Technology <span class="filter-count" id="count-ai">8</span>
+          </button>
+          <button class="filter-btn" data-filter="motivation">
+            <span class="cat-dot cat-dot--green"></span>Lifestyle & Motivation <span class="filter-count" id="count-motivation">8</span>
+          </button>
+        </div>
+
+        <div class="generation-progress" id="generation-progress" style="display:none;">
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+          </div>
+          <span class="progress-text" id="progress-text">Generating posts...</span>
+        </div>
+
+        <div class="posts-grid" id="posts-grid">
+          <div class="empty-state" id="empty-state">
+            <div class="empty-icon">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <h3>No Posts Generated Yet</h3>
+            <p>Click "Generate 25 Posts" to create today's content batch with AI-powered images and captions.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== SCHEDULE TAB ========== -->
+      <section class="tab-content" id="tab-schedule">
+        <div class="schedule-layout">
+          <div class="schedule-sidebar">
+            <h3>Posting Schedule</h3>
+            <div class="setting-group">
+              <label class="setting-label">Posts Per Day</label>
+              <div class="slider-row">
+                <input type="range" min="1" max="50" value="25" class="slider" id="posts-per-day-slider">
+                <span class="slider-value" id="posts-per-day-value">25</span>
+              </div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">Time Distribution</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="time-dist" value="even"> Even Spread
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="time-dist" value="peak" checked> Peak Hours
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="time-dist" value="custom"> Custom
+                </label>
+              </div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">Peak Hours</label>
+              <div class="peak-hours-grid">
+                <label class="peak-label"><input type="checkbox" checked> 7–9 AM</label>
+                <label class="peak-label"><input type="checkbox" checked> 12–1 PM</label>
+                <label class="peak-label"><input type="checkbox" checked> 5–7 PM</label>
+                <label class="peak-label"><input type="checkbox" checked> 8–10 PM</label>
+              </div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">Auto-Optimize</label>
+              <div class="toggle-row">
+                <span>Use engagement data to optimize times</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+            <button class="btn btn--primary btn--full" id="btn-apply-schedule">Apply Schedule</button>
+          </div>
+          <div class="schedule-calendar">
+            <div class="calendar-header-row">
+              <div class="calendar-time-label"></div>
+              <div class="calendar-day-label">Mon</div>
+              <div class="calendar-day-label">Tue</div>
+              <div class="calendar-day-label">Wed</div>
+              <div class="calendar-day-label">Thu</div>
+              <div class="calendar-day-label">Fri</div>
+              <div class="calendar-day-label">Sat</div>
+              <div class="calendar-day-label">Sun</div>
+            </div>
+            <div class="calendar-body" id="calendar-body"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== SETTINGS TAB ========== -->
+      <section class="tab-content" id="tab-settings">
+        <div class="settings-grid">
+          <div class="settings-card settings-card--wide">
+            <div class="settings-card-header">
+              <div class="settings-card-icon settings-card-icon--blue">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              </div>
+              <h3>Facebook API Configuration</h3>
+              <div class="connection-status" id="connection-status">
+                <span class="status-dot status-dot--inactive"></span>
+                <span>Disconnected</span>
+              </div>
+            </div>
+            <div class="settings-card-body">
+              <div class="input-group">
+                <label>App ID</label>
+                <input type="text" placeholder="Enter your Facebook App ID" class="input" id="input-app-id">
+              </div>
+              <div class="input-group">
+                <label>App Secret</label>
+                <input type="password" placeholder="Enter your App Secret" class="input" id="input-app-secret">
+              </div>
+              <div class="input-group">
+                <label>Page Access Token</label>
+                <input type="password" placeholder="Enter your Page Access Token" class="input" id="input-page-token">
+              </div>
+              <div class="btn-row">
+                <button class="btn btn--primary" id="btn-test-connection">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Test Connection
+                </button>
+                <button class="btn btn--outline" id="btn-save-api">Save Configuration</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card settings-card--wide">
+            <div class="settings-card-header clickable" id="api-guide-toggle">
+              <div class="settings-card-icon settings-card-icon--amber">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <h3>Facebook API Setup Guide</h3>
+              <svg class="chevron" id="guide-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="settings-card-body api-guide-content" id="api-guide-content" style="display:none;">
+              <div class="guide-steps">
+                <div class="guide-step">
+                  <span class="step-num">1</span>
+                  <div class="step-content">
+                    <strong>Create a Developer Account</strong>
+                    <p>Go to <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer">developers.facebook.com</a> and create a Developer account.</p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <span class="step-num">2</span>
+                  <div class="step-content">
+                    <strong>Create an App</strong>
+                    <p>Click "Create App" → Choose "Business" type.</p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <span class="step-num">3</span>
+                  <div class="step-content">
+                    <strong>Add Products</strong>
+                    <p>Add "Facebook Login" and "Pages API" products to your app.</p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <span class="step-num">4</span>
+                  <div class="step-content">
+                    <strong>Open Graph API Explorer</strong>
+                    <p>In Graph API Explorer, select your app.</p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <span class="step-num">5</span>
+                  <div class="step-content">
+                    <strong>Get Token</strong>
+                    <p>Click "Get Token" → "Get Page Access Token".</p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <span class="step-num">6</span>
+                  <div class="step-content">
+                    <strong>Grant Permissions</strong>
+                    <p>Grant permissions: <code>pages_manage_posts</code>, <code>pages_read_engagement</code>, <code>pages_show_list</code></p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <span class="step-num">7</span>
+                  <div class="step-content">
+                    <strong>Copy Token</strong>
+                    <p>Copy the Page Access Token into the field above.</p>
+                  </div>
+                </div>
+                <div class="guide-step">
+                  <span class="step-num">8</span>
+                  <div class="step-content">
+                    <strong>Long-Lived Token</strong>
+                    <p>For a long-lived token, exchange it via the Access Token Debugger.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="guide-note">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <p><strong>Important:</strong> Facebook does NOT allow automated posting to personal profiles via API. You must use a Facebook Page. You can create one linked to your personal profile in seconds.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon settings-card-icon--green">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </div>
+              <h3>Content Settings</h3>
+            </div>
+            <div class="settings-card-body">
+              <div class="setting-group">
+                <label class="setting-label">Category Weights</label>
+                <div class="category-weight">
+                  <div class="cw-header">
+                    <span class="cat-dot cat-dot--amber"></span>
+                    <span>Business & Marketing</span>
+                    <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                  </div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="100" value="35" class="slider slider--amber">
+                    <span class="slider-value">35%</span>
+                  </div>
+                </div>
+                <div class="category-weight">
+                  <div class="cw-header">
+                    <span class="cat-dot cat-dot--blue"></span>
+                    <span>AI & Technology</span>
+                    <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                  </div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="100" value="35" class="slider slider--blue">
+                    <span class="slider-value">35%</span>
+                  </div>
+                </div>
+                <div class="category-weight">
+                  <div class="cw-header">
+                    <span class="cat-dot cat-dot--green"></span>
+                    <span>Lifestyle & Motivation</span>
+                    <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                  </div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="100" value="30" class="slider slider--green">
+                    <span class="slider-value">30%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">Tone</label>
+                <div class="tone-selector">
+                  <button class="tone-btn active">Professional</button>
+                  <button class="tone-btn">Casual</button>
+                  <button class="tone-btn">Inspirational</button>
+                  <button class="tone-btn">Provocative</button>
+                </div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">Hashtags</label>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="hashtag-mode" value="auto" checked> Auto-generate</label>
+                  <label class="radio-label"><input type="radio" name="hashtag-mode" value="custom"> Custom list</label>
+                  <label class="radio-label"><input type="radio" name="hashtag-mode" value="none"> None</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon settings-card-icon--purple">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+              <h3>Image Settings</h3>
+            </div>
+            <div class="settings-card-body">
+              <div class="setting-group">
+                <label class="setting-label">Style</label>
+                <div class="style-selector">
+                  <button class="style-btn active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    Photorealistic
+                  </button>
+                  <button class="style-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                    Branded Graphics
+                  </button>
+                  <button class="style-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17.1 11.2A6.4 6.4 0 0 1 21 17.5V20H3v-2.5c0-2.8 3-4 6.5-4s6.5 1.2 6.5 4"/></svg>
+                    Artistic
+                  </button>
+                </div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">Aspect Ratio</label>
+                <div class="ratio-selector">
+                  <button class="ratio-btn active">
+                    <div class="ratio-preview ratio-preview--square"></div>
+                    Square (1:1)
+                  </button>
+                  <button class="ratio-btn">
+                    <div class="ratio-preview ratio-preview--landscape"></div>
+                    Landscape (16:9)
+                  </button>
+                  <button class="ratio-btn">
+                    <div class="ratio-preview ratio-preview--portrait"></div>
+                    Portrait (4:5)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-gradient"></div>
+      <div class="footer-content">
+        <span>Powered by <strong>Scalz.ai</strong> &bull; Built for automated growth</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./config.js"></script>
+  <script src="./supabase-client.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
